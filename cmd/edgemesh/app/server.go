@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 
+	"github.com/kubeedge/edgemesh/pkg/tunnel"
 	"github.com/spf13/cobra"
 	cliflag "k8s.io/component-base/cli/flag"
 	"k8s.io/component-base/cli/globalflag"
@@ -15,8 +16,6 @@ import (
 	"github.com/kubeedge/edgemesh/pkg/apis/componentconfig/edgemesh/v1alpha1"
 	"github.com/kubeedge/edgemesh/pkg/common/client"
 	"github.com/kubeedge/edgemesh/pkg/common/informers"
-	"github.com/kubeedge/edgemesh/pkg/controller"
-	"github.com/kubeedge/edgemesh/pkg/networking"
 	"github.com/kubeedge/kubeedge/pkg/version/verflag"
 )
 
@@ -70,6 +69,7 @@ for the inter-communications between services at edge scenarios.`,
 
 // registerModules register all the modules started in edgemesh
 func registerModules(c *v1alpha1.EdgeMeshConfig) {
-	controller.Register(c.Modules.Controller)
-	networking.Register(c.Modules.Networking)
+	//controller.Register(c.Modules.Controller)
+	//networking.Register(c.Modules.Networking)
+	tunnel.Register(c.Modules.Tunnel)
 }

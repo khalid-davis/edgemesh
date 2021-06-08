@@ -69,9 +69,9 @@ func (gm *Manager) AddGateway(gw *istioapi.Gateway) {
 			}
 			gatewayServer, err := server.NewServer(ip, int(s.Port.Number), opts)
 			if err != nil {
-				klog.Warningf("new gateway server on port %d error: %v", int(s.Port.Number), err)
+				klog.Warningf("new gateway httpserver on port %d error: %v", int(s.Port.Number), err)
 				if strings.Contains(err.Error(), "address already in use") {
-					klog.Errorf("new gateway server on port %d error: %v. please wait, maybe old pod is deleting.", int(s.Port.Number), err)
+					klog.Errorf("new gateway httpserver on port %d error: %v. please wait, maybe old pod is deleting.", int(s.Port.Number), err)
 					os.Exit(1)
 				}
 				continue
@@ -120,9 +120,9 @@ func (gm *Manager) UpdateGateway(gw *istioapi.Gateway) {
 			}
 			gatewayServer, err := server.NewServer(ip, int(s.Port.Number), opts)
 			if err != nil {
-				klog.Warningf("new gateway server on port %d error: %v", int(s.Port.Number), err)
+				klog.Warningf("new gateway httpserver on port %d error: %v", int(s.Port.Number), err)
 				if strings.Contains(err.Error(), "address already in use") {
-					klog.Errorf("new gateway server on port %d error: %v. please wait, maybe old pod is deleting.", int(s.Port.Number), err)
+					klog.Errorf("new gateway httpserver on port %d error: %v. please wait, maybe old pod is deleting.", int(s.Port.Number), err)
 					os.Exit(1)
 				}
 				continue

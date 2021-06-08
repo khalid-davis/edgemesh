@@ -15,9 +15,9 @@ type EdgeMeshConfig struct {
 	Modules *Modules `json:"modules,omitempty"`
 }
 
-// KubeAPIConfig indicates the configuration for interacting with k8s server
+// KubeAPIConfig indicates the configuration for interacting with k8s httpserver
 type KubeAPIConfig struct {
-	// Master indicates the address of the Kubernetes API server (overrides any value in KubeConfig)
+	// Master indicates the address of the Kubernetes API httpserver (overrides any value in KubeConfig)
 	// such as https://127.0.0.1:8443
 	// default ""
 	// Note: Can not use "omitempty" option,  It will affect the output of the default configuration file
@@ -43,6 +43,7 @@ type Modules struct {
 	Networking *Networking `json:"networking,omitempty"`
 	// Controller indicates controller module config
 	Controller *Controller `json:"controller,omitempty"`
+	Tunnel *Tunnel `json:"tunnel,omitempty"`
 }
 
 // Networking indicates networking module config
@@ -60,6 +61,7 @@ type Networking struct {
 	// EdgeGateway indicates edge gateway config for Networking module
 	// Optional if edge gateway is configured
 	EdgeGateway *EdgeGateway `json:"edgeGateway,omitempty"`
+
 }
 
 // TrafficPlugin indicates the go-chassis traffic plugins config
@@ -146,6 +148,36 @@ type EdgeGateway struct {
 	// empty or "*" stands for not exclude any ip. You can also specify ips such as "192.168.1.56,10.5.2.1"
 	// default ""
 	ExcludeIP string `json:"excludeIP,omitempty"`
+}
+
+type Tunnel struct {
+	// Enable indicates whether EdgeHub is enabled,
+	// if set to false (for debugging etc.), skip checking other EdgeHub configs.
+	// default true
+	Enable bool `json:"enable"`
+	// Heartbeat indicates heart beat (second)
+	// default 15
+	Heartbeat int32 `json:"heartbeat,omitempty"`
+	// TLSCAFile set ca file path
+	// default "/etc/kubeedge/ca/rootCA.crt"
+	TLSCAFile string `json:"tlsCaFile,omitempty"`
+	// TLSCertFile indicates the file containing x509 Certificate for HTTPS
+	// default "/etc/kubeedge/certs/server.crt"
+	TLSCertFile string `json:"tlsCertFile,omitempty"`
+	// TLSPrivateKeyFile indicates the file containing x509 private key matching tlsCertFile
+	// default "/etc/kubeedge/certs/server.key"
+	TLSPrivateKeyFile string `json:"tlsPrivateKeyFile,omitempty"`
+	// Token indicates the priority of joining the cluster for the edge
+	Token string `json:"token"`
+	// HTTPServer indicates the server for edge to apply for the certificate.
+	HTTPServer string `json:"httpServer,omitempty"`
+	// RotateCertificates indicates whether edge certificate can be rotated
+	// default true
+	RotateCertificates bool `json:"rotateCertificates,omitempty"`
+	// HostnameOverride indicates hostname
+	// default os.Hostname()
+	HostnameOverride string `json:"hostnameOverride,omitempty"`
+
 }
 
 // Controller indicates the config of controller module

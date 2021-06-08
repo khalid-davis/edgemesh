@@ -140,7 +140,7 @@ func (p *TCP) responseCallback(data *invocation.Response) error {
 		IP:   net.ParseIP(host),
 		Port: port,
 	}
-	klog.Infof("l4 proxy get server address: %v", addr)
+	klog.Infof("l4 proxy get httpserver address: %v", addr)
 	var proxyClient net.Conn
 	defaultTCPReconnectTimes := config.Config.Protocol.TCPReconnectTimes
 	defaultTCPClientTimeout := time.Second * time.Duration(config.Config.Protocol.TCPClientTimeout)
@@ -150,9 +150,9 @@ func (p *TCP) responseCallback(data *invocation.Response) error {
 			break
 		}
 	}
-	// error when connecting to server, maybe timeout or any other error
+	// error when connecting to httpserver, maybe timeout or any other error
 	if err != nil {
-		klog.Errorf("l4 proxy dial server error: %v", err)
+		klog.Errorf("l4 proxy dial httpserver error: %v", err)
 		err = p.Conn.Close()
 		if err != nil {
 			klog.Errorf("close conn err: %v", err)
@@ -183,7 +183,7 @@ func (p *TCP) responseCallback(data *invocation.Response) error {
 		klog.Infof("write websocket upgrade req success")
 	}
 
-	klog.Infof("l4 Proxy start a proxy to server %s", addr.String())
+	klog.Infof("l4 Proxy start a proxy to httpserver %s", addr.String())
 	go ctk.processServerProxy()
 	go ctk.processClientProxy()
 	return nil

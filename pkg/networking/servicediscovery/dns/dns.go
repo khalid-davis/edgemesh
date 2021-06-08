@@ -106,13 +106,13 @@ func Init() {
 		}
 		dnsConn, err = net.ListenUDP("udp", laddr)
 		if err != nil {
-			klog.Errorf("[EdgeMesh] dns server listen on %v error: %v", laddr, err)
+			klog.Errorf("[EdgeMesh] dns httpserver listen on %v error: %v", laddr, err)
 			return
 		}
 	})
 }
 
-// StartDNS starts edgemesh dns server
+// StartDNS starts edgemesh dns httpserver
 func StartDNS() {
 	defer dnsConn.Close()
 
@@ -120,7 +120,7 @@ func StartDNS() {
 		req := make([]byte, bufSize)
 		n, from, err := dnsConn.ReadFromUDP(req)
 		if err != nil || n <= 0 {
-			klog.Errorf("[EdgeMesh] dns server read from udp error: %v", err)
+			klog.Errorf("[EdgeMesh] dns httpserver read from udp error: %v", err)
 			continue
 		}
 
@@ -193,7 +193,7 @@ func parseDNSQuery(req []byte) (que *dnsQuestion, err error) {
 	que = &dnsQuestion{
 		event: eventNothing,
 	}
-	// Generally, when the recursive DNS server requests upward, it may
+	// Generally, when the recursive DNS httpserver requests upward, it may
 	// initiate a resolution request for multiple aliases/domain names
 	// at once, Edge DNS does not need to process a message that carries
 	// multiple questions at a time.
@@ -295,7 +295,7 @@ func lookup(serviceURL string) (exist bool, ip string) {
 	if s != nil {
 		svcName := namespace + "." + name
 		ip := serviceproxy.GetServiceClusterIP(svcName)
-		klog.Infof("[EdgeMesh] dns server parse %s ip %s", serviceURL, ip)
+		klog.Infof("[EdgeMesh] dns httpserver parse %s ip %s", serviceURL, ip)
 		return true, ip
 	}
 	klog.Errorf("[EdgeMesh] service %s is not found in this cluster", serviceURL)

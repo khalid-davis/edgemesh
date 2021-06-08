@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: deployment
+metadata:
+  name: edgemesh
+  namespace: kubeedge
+  labels:
+    k8s-app: kubeedge
+    kubeedge: edgemesh
+spec:
+  selector:
+    matchLabels:
+      k8s-app: kubeedge
+      kubeedge: edgemesh
+  template:
+    metadata:
+      labels:
+        k8s-app: kubeedge
+        kubeedge: edgemesh
+    spec:
+      nodeName: ke-edge1
+      hostNetwork: true
+      containers:
+        - name: edgemesh
+          securityContext:
+            privileged: true
+          image: poorunga/edgemesh:0.1
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - name: conf
+              mountPath: /etc/kubeedge/config
+            - name: resolv
+              mountPath: /etc/resolv.conf
+      volumes:
+        - name: conf
+          configMap:
+            name: edgemesh-cfg
+        - name: resolv
+          hostPath:
+            path: /etc/resolv.conf

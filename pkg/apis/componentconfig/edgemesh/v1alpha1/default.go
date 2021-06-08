@@ -1,15 +1,24 @@
 package v1alpha1
 
 import (
+	"os"
 	"path"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	"github.com/kubeedge/edgemesh/pkg/common/constants"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/klog/v2"
 )
 
 // NewDefaultEdgeMeshConfig returns a full EdgeMeshConfig object
 func NewDefaultEdgeMeshConfig() *EdgeMeshConfig {
+	token := os.Getenv(constants.CloudCoreToken)
+	if token == "" {
+		klog.Fatal("CloudCore Token is empty, Please provide")
+	}
+	hostnameOverride, err := os.Hostname()
+	if err != nil {
+		hostnameOverride = constants.DefaultHostnameOverride
+	}
 	e := &EdgeMeshConfig{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       Kind,
@@ -61,6 +70,17 @@ func NewDefaultEdgeMeshConfig() *EdgeMeshConfig {
 					DestinationRuleEvent: constants.DefaultDestinationRuleEventBuffer,
 					GatewayEvent:         constants.DefaultGatewayEventBuffer,
 				},
+			},
+			Tunnel: &Tunnel{
+				Enable:             true,
+				Heartbeat:          15,
+				TLSCAFile:          constants.DefaultCAFile,
+				TLSCertFile:        constants.DefaultCertFile,
+				TLSPrivateKeyFile:  constants.DefaultKeyFile,
+				RotateCertificates: true,
+				HostnameOverride:   hostnameOverride,
+				// TODO fetch token from env or file ,which come from the tokensecret
+				Token: token,
 			},
 		},
 	}

@@ -12,7 +12,7 @@ func Init() {
 	serviceproxy.Init()
 	// init iptables
 	proxier.Init()
-	// init dns server
+	// init dns httpserver
 	dns.Init()
 }
 

@@ -174,7 +174,7 @@ func (p *Proxier) readAndCleanRule() {
 	}
 }
 
-// ensureResolvForHost adds edgemesh dns server to the head of /etc/resolv.conf
+// ensureResolvForHost adds edgemesh dns httpserver to the head of /etc/resolv.conf
 func ensureResolvForHost() {
 	bs, err := ioutil.ReadFile(hostResolv)
 	if err != nil {
