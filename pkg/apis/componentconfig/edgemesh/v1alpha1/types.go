@@ -171,6 +171,8 @@ type Tunnel struct {
 	Token string `json:"token"`
 	// HTTPServer indicates the server for edge to apply for the certificate.
 	HTTPServer string `json:"httpServer,omitempty"`
+	// TunnelServer indicates the server for edge to relay or exchange network info
+	TunnelServer string `json:"tunnelServer,omitempty"`
 	// RotateCertificates indicates whether edge certificate can be rotated
 	// default true
 	RotateCertificates bool `json:"rotateCertificates,omitempty"`

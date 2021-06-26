@@ -77,5 +77,5 @@ func (ifs *informers) Start(stopCh <-chan struct{}) {
 		go informer.Run(stopCh)
 	}
 	ifs.k8sSharedInformerFactory.Start(stopCh)
-	ifs.istioSharedInformerFactory.Start(stopCh)
+	//ifs.istioSharedInformerFactory.Start(stopCh)
 }

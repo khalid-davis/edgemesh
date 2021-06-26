@@ -36,6 +36,7 @@ type GlobalController struct {
 	endpointsManager       *manager.EndpointsManager
 	destinationRuleManager *manager.DestinationRuleManager
 	gatewayManager         *manager.GatewayManager
+	secretManager          *manager.SecretManager
 }
 
 func (gc *GlobalController) syncService() {
@@ -172,6 +173,40 @@ func (gc *GlobalController) syncGateway() {
 	}
 }
 
+func (gc *GlobalController) syncSecret() {
+	var operation string
+	for {
+		select {
+		case <-beehiveContext.Done():
+			klog.Warning("Stop global controller syncSecret loop")
+			return
+		case e := <-gc.secretManager.Events():
+			klog.V(4).Infof("Get secret events: event type: %s.", e.Type)
+			secret, ok := e.Object.(*k8sapi.Secret)
+			if !ok {
+				klog.Warningf("object type: %T unsupported", secret)
+				continue
+			}
+			switch e.Type {
+			case watch.Added:
+				operation = model.InsertOperation
+			case watch.Modified:
+				operation = model.UpdateOperation
+			case watch.Deleted:
+				operation = model.DeleteOperation
+			default:
+				klog.Warningf("Secret event type: %s unsupported", e.Type)
+				continue
+			}
+			msg := model.NewMessage("")
+			msg.BuildRouter(modules.AgentTunnelModuleName, modules.AgentTunnelGroupName, constants.ResourceTypeSecret, operation)
+			msg.Content = secret
+			klog.V(4).Infof("send msg: %+v", msg)
+			beehiveContext.Send(modules.AgentTunnelModuleName, *msg)
+		}
+	}
+}
+
 // Start GlobalController
 func (gc *GlobalController) Start() error {
 	klog.Info("start global controller")
@@ -186,6 +221,9 @@ func (gc *GlobalController) Start() error {
 
 	// gateway
 	go gc.syncGateway()
+
+	// secret
+	go gc.syncSecret()
 	return nil
 }
 
@@ -221,6 +259,7 @@ func NewGlobalController(k8sInformerFactory k8sinformers.SharedInformerFactory,
 		klog.Warningf("Create gateway manager failed with error: %s", err)
 		return nil, err
 	}
+	secretManager, err := manager.NewSecretManager(secretInformer.Informer())
 
 	gc = &GlobalController{
 		kubeClient:             client.GetKubeClient(),
@@ -233,6 +272,7 @@ func NewGlobalController(k8sInformerFactory k8sinformers.SharedInformerFactory,
 		endpointsManager:       endpointsManager,
 		destinationRuleManager: drManager,
 		gatewayManager:         gatewayManager,
+		secretManager: 			secretManager,
 	}
 
 	return gc, nil

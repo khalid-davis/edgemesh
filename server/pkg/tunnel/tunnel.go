@@ -6,6 +6,7 @@ import (
 	"github.com/kubeedge/edgemesh/pkg/common/certificate"
 	"github.com/kubeedge/edgemesh/pkg/common/modules"
 	"github.com/kubeedge/edgemesh/server/pkg/tunnel/config"
+	"github.com/kubeedge/edgemesh/server/pkg/tunnel/tunnelserver"
 )
 
 type Tunnel struct {
@@ -49,6 +50,8 @@ func (t *Tunnel) Start() {
 	}
 	t.certManager = certificate.NewCertManager(certificateConfig, config.Config.NodeName)
 	t.certManager.Start()
+	// TunnelServer mainly used to help hole punch or relay between edgemesh-agent
+	go tunnelserver.StartTunnelServer()
 
 	// TODO ifRotationDone() ????, 后面要添加这个东西，如果证书轮换了，要重新进行连接
 	select {}

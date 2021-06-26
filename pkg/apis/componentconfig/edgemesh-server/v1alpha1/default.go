@@ -36,9 +36,9 @@ func NewDefaultEdgeMeshServerConfig() *Config {
 			Tunnel: &Tunnel{
 				Enable:             true,
 				Heartbeat:          15,
-				TLSCAFile:          constants.DefaultCAFile,
-				TLSCertFile:        constants.DefaultCertFile,
-				TLSPrivateKeyFile:  constants.DefaultKeyFile,
+				TLSCAFile:          constants.ServerDefaultCAFile,
+				TLSCertFile:        constants.ServerDefaultCertFile,
+				TLSPrivateKeyFile:  constants.ServerDefaultKeyFile,
 				RotateCertificates: true,
 				HostnameOverride:   hostnameOverride,
 				// TODO fetch token from env or file ,which come from the tokensecret

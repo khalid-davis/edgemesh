@@ -5,9 +5,7 @@ import v1 "k8s.io/api/core/v1"
 // Resources
 const (
 	// Certificates
-	//DefaultConfigDir = "/etc/kubeedge/config/"
-	// TODO delete
-	DefaultConfigDir = "D:\\workspace\\gocode\\gomodule\\local-conf"
+	DefaultConfigDir = "/etc/kubeedge/config/"
 
 	// Config
 	DefaultKubeContentType         = "application/vnd.kubernetes.protobuf"
@@ -28,6 +26,7 @@ const (
 	ResourceTypeEndpoints   = "endpoints"
 	ResourceDestinationRule = "destinationRule"
 	ResourceTypeGateway     = "gateway"
+	ResourceTypeSecret     = "secret"
 )
 
 const (
@@ -40,12 +39,10 @@ const (
 	DefaultCAURL        = "/ca.crt"
 	DefaultAgentCertURL = "/agent.crt"
 	DefaultHostnameOverride = "default-agent-node"
-	//DefaultCAFile = "/etc/kubeedge/edgemesh/ca/rootCA.crt"
-	//DefaultCertFile = "/etc/kubeedge/edgemesh/certs/server.crt"
-	//DefaultKeyFile = "/etc/kubeedge/edgemesh/certs/server.key"
-	// TODO delete
-	DefaultCAFile = "D:\\workspace\\gocode\\gomodule\\local-conf\\edgemesh-agent\\ca\\rootCA.crt"
-	DefaultCertFile = "D:\\workspace\\gocode\\gomodule\\local-conf\\edgemesh-agent\\certs\\server.crt"
-	DefaultKeyFile = "D:\\workspace\\gocode\\gomodule\\local-conf\\edgemesh-agent\\certs\\server.key"
-
+	ServerDefaultCAFile = "/etc/kubeedge/edgemesh/server/ca/rootCA.crt"
+	ServerDefaultCertFile = "/etc/kubeedge/edgemesh/server/certs/server.crt"
+	ServerDefaultKeyFile = "/etc/kubeedge/edgemesh/server/certs/server.key"
+	AgentDefaultCAFile = "/etc/kubeedge/edgemesh/agent/ca/rootCA.crt"
+	AgentDefaultCertFile = "/etc/kubeedge/edgemesh/agent/certs/server.crt"
+	AgentDefaultKeyFile = "/etc/kubeedge/edgemesh/agent/certs/server.key"
 )

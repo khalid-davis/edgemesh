@@ -78,6 +78,7 @@ func (p *TCP) responseCallback(data *invocation.Response) error {
 		klog.Errorf("handle l4 proxy err : %v", data.Err)
 		return data.Err
 	}
+
 	return nil
 }
 
