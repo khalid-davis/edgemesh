@@ -121,8 +121,6 @@ localup_kubeedge() {
   token=$(sudo keadm gettoken --kube-config=${KUBECONFIG})
   echo $token
 
-
-
   # turn off edgemesh and turn on local apiserver feature and resart edgeocre
   export CHECK_EDGECORE_ENVIRONMENT="false"
   sudo -E keadm join --cloudcore-ipport=${HOST_IP}:10000 --kubeedge-version=${KUBEEDGE_VERSION} --token=${token} --edgenode-name=${EDGE_NODENAME}
@@ -130,9 +128,11 @@ localup_kubeedge() {
   EDGE_BIN=/usr/local/bin/edgecore
   EDGE_CONFIGFILE=/etc/kubeedge/config/edgecore.yaml
   EDGECORE_LOG=${LOG_DIR}/edgecore.log
-  cat $EDGE_CONFIGFILE | yq e '.modules.metaManager.metaServer.enable=true' - > ec.yaml
+  cat $EDGE_CONFIGFILE | yq e '
+    .modules.edged.clusterDNS="169.254.96.16"
+    | .modules.edged.clusterDomain="cluster.local"
+    | .modules.metaManager.metaServer.enable=true' - > ec.yaml
   sudo cp ec.yaml $EDGE_CONFIGFILE
-  #sudo sed -i '$a\  edgeMesh:\n    enable: false\n'  ${EDGE_CONFIGFILE}
 
   ps -aux | grep edgecore
 
