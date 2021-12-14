@@ -88,6 +88,7 @@ jobs:
         run: |
           command -v ginkgo || go get github.com/onsi/ginkgo/ginkgo
           go get sigs.k8s.io/kind@v0.11.1
+          GO111MODULE=on go get github.com/mikefarah/yq/v4
           curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.3/bin/linux/amd64/kubectl && sudo install kubectl /usr/local/bin/kubectl
           type keadm || {
             curl -LO https://github.com/kubeedge/kubeedge/releases/download/$KUBEEDGE_VERSION/keadm-$KUBEEDGE_VERSION-linux-amd64.tar.gz

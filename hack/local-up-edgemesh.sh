@@ -96,6 +96,17 @@ localup_kubeedge() {
   add_cleanup 'sudo -E keadm reset --force --kube-config=${KUBECONFIG}'
   sudo -E keadm init --advertise-address=${HOST_IP} --kubeedge-version=${KUBEEDGE_VERSION} --kube-config=${KUBECONFIG}
 
+
+  # turn on local apiserver feature and restart cloudcore
+  CLOUD_CONFIGFILE=/etc/kubeedge/config/cloudcore.yaml
+  CLOUDCORE_LOG=${LOG_DIR}/cloudcore.log
+  cat $CLOUD_CONFIGFILE | yq e '.modules.dynamicController.enable=true' - > cc.yaml
+  sudo cp $CLOUD_CONFIGFILE $CLOUD_CONFIGFILE.reconfigure_bk
+  sudo cp cc.yaml $CLOUD_CONFIGFILE
+  sudo pkill cloudcore || true
+  nohup sudo ${CLOUD_BIN} --config=${CLOUD_CONFIGFILE} > "${CLOUDCORE_LOG}" 2>&1 &
+  cat $CLOUD_CONFIGFILE
+
   # ensure tokensecret is generated
   for ((i=1;i<20;i++)) ; do
       sleep 3
@@ -109,14 +120,18 @@ localup_kubeedge() {
   token=$(sudo keadm gettoken --kube-config=${KUBECONFIG})
   echo $token
 
-  # turn off edgemesh and turn on local apiserver featuren and resart edgeocre
+
+
+  # turn off edgemesh and turn on local apiserver feature and resart edgeocre
   export CHECK_EDGECORE_ENVIRONMENT="false"
   sudo -E keadm join --cloudcore-ipport=${HOST_IP}:10000 --kubeedge-version=${KUBEEDGE_VERSION} --token=${token} --edgenode-name=${EDGE_NODENAME}
 
   EDGE_BIN=/usr/local/bin/edgecore
   EDGE_CONFIGFILE=/etc/kubeedge/config/edgecore.yaml
   EDGECORE_LOG=${LOG_DIR}/edgecore.log
-  sudo sed -i '$a\  edgeMesh:\n    enable: false\n'  ${EDGE_CONFIGFILE}
+  cat $EDGE_CONFIGFILE | yq e '.modules.metaManager.metaServer.enable=true' - > ec.yaml
+  sudo cp ec.yaml $EDGE_CONFIGFILE
+  #sudo sed -i '$a\  edgeMesh:\n    enable: false\n'  ${EDGE_CONFIGFILE}
 
   ps -aux | grep edgecore
 
@@ -124,6 +139,8 @@ localup_kubeedge() {
   nohup sudo -E ${EDGE_BIN} --config=${EDGE_CONFIGFILE} > "${EDGECORE_LOG}" 2>&1 &
   EDGECORE_PID=$!
   sleep 15
+  curl 127.0.0.1:10550/api/v1/services
+
   ps -aux | grep edgecore
   check_node_ready ${EDGE_NODENAME}
 }
