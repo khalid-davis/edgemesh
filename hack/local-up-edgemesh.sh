@@ -98,6 +98,7 @@ localup_kubeedge() {
 
 
   # turn on local apiserver feature and restart cloudcore
+  CLOUD_BIN=/usr/local/bin/cloudcore
   CLOUD_CONFIGFILE=/etc/kubeedge/config/cloudcore.yaml
   CLOUDCORE_LOG=${LOG_DIR}/cloudcore.log
   cat $CLOUD_CONFIGFILE | yq e '.modules.dynamicController.enable=true' - > cc.yaml
