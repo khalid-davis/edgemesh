@@ -134,18 +134,18 @@ localup_kubeedge() {
 #    | .modules.metaManager.metaServer.enable=true' - > ec.yaml
 
 #  cat $EDGE_CONFIGFILE | yq e '.modules.metaManager.metaServer.enable=true' - > ec.yaml
-  sudo cp ec.yaml $EDGE_CONFIGFILE
+#  sudo cp ec.yaml $EDGE_CONFIGFILE
 
-  ps -aux | grep edgecore
+#  ps -aux | grep edgecore
 
-  sudo pkill edgecore
-  nohup sudo -E ${EDGE_BIN} --config=${EDGE_CONFIGFILE} > "${EDGECORE_LOG}" 2>&1 &
-  EDGECORE_PID=$!
+#  sudo pkill edgecore
+#  nohup sudo -E ${EDGE_BIN} --config=${EDGE_CONFIGFILE} > "${EDGECORE_LOG}" 2>&1 &
+#  EDGECORE_PID=$!
   sleep 15
 
   ps -aux | grep edgecore
   check_node_ready ${EDGE_NODENAME}
-  sudo curl 127.0.0.1:10550/api/v1/services
+#  sudo curl 127.0.0.1:10550/api/v1/services
 }
 
 build_component_image() {
