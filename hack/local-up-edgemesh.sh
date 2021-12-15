@@ -145,7 +145,7 @@ localup_kubeedge() {
 
   ps -aux | grep edgecore
   check_node_ready ${EDGE_NODENAME}
-  curl 127.0.0.1:10550/api/v1/services
+  sudo curl 127.0.0.1:10550/api/v1/services
 }
 
 build_component_image() {
