@@ -98,16 +98,16 @@ localup_kubeedge() {
 
 
 #  # turn on local apiserver feature and restart cloudcore
-  CLOUD_BIN=/usr/local/bin/cloudcore
-  CLOUD_CONFIGFILE=/etc/kubeedge/config/cloudcore.yaml
-  CLOUDCORE_LOG=${LOG_DIR}/cloudcore.log
-  cat $CLOUD_CONFIGFILE | yq e '.modules.dynamicController.enable=true' - > cc.yaml
-  sudo cp $CLOUD_CONFIGFILE $CLOUD_CONFIGFILE.reconfigure_bk
-  sudo cp cc.yaml $CLOUD_CONFIGFILE
-  sudo pkill cloudcore || true
-  nohup sudo ${CLOUD_BIN} --config=${CLOUD_CONFIGFILE} > "${CLOUDCORE_LOG}" 2>&1 &
-  cat $CLOUD_CONFIGFILE
-
+#  CLOUD_BIN=/usr/local/bin/cloudcore
+#  CLOUD_CONFIGFILE=/etc/kubeedge/config/cloudcore.yaml
+#  CLOUDCORE_LOG=${LOG_DIR}/cloudcore.log
+#  cat $CLOUD_CONFIGFILE | yq e '.modules.dynamicController.enable=true' - > cc.yaml
+#  sudo cp $CLOUD_CONFIGFILE $CLOUD_CONFIGFILE.reconfigure_bk
+#  sudo cp cc.yaml $CLOUD_CONFIGFILE
+#  sudo pkill cloudcore || true
+#  nohup sudo ${CLOUD_BIN} --config=${CLOUD_CONFIGFILE} > "${CLOUDCORE_LOG}" 2>&1 &
+#  cat $CLOUD_CONFIGFILE
+#
   # ensure tokensecret is generated
   for ((i=1;i<20;i++)) ; do
       sleep 3
@@ -133,7 +133,7 @@ localup_kubeedge() {
 #    | .modules.edged.clusterDomain="cluster.local"
 #    | .modules.metaManager.metaServer.enable=true' - > ec.yaml
 
-  cat $EDGE_CONFIGFILE | yq e '.modules.metaManager.metaServer.enable=true' - > ec.yaml
+#  cat $EDGE_CONFIGFILE | yq e '.modules.metaManager.metaServer.enable=true' - > ec.yaml
   sudo cp ec.yaml $EDGE_CONFIGFILE
 
   ps -aux | grep edgecore
