@@ -66,5 +66,5 @@ data:
         enable: {{ .Values.modules.tunnel.enable }}
         listenPort: {{ .Values.modules.tunnel.listenPort }}
         security:
-          enable: {{ .Values.modules.tunnel.security.enable }}}
+          enable: {{ .Values.modules.tunnel.security.enable }}
           httpServer: {{ .Values.modules.tunnel.security.httpServer }}
