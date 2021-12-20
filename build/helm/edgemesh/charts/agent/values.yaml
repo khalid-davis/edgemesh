@@ -34,3 +34,7 @@ modules:
   tunnel:
     enable: true
     listenPort: 20006
+    security:
+      enable: false
+      httpServer: ""
+
