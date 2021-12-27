@@ -95,6 +95,9 @@ jobs:
             chmod +x ./keadm-$KUBEEDGE_VERSION-linux-amd64/keadm/keadm
             sudo mv ./keadm-$KUBEEDGE_VERSION-linux-amd64/keadm/keadm /usr/local/bin/keadm
           }
+          type helm || {
+            https://zgljl2012.com/ubuntu-18-04-an-zhuang-helm/
+          }
       - name: Checkout code
         uses: actions/checkout@v2
         with:

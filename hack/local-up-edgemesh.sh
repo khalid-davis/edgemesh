@@ -155,9 +155,17 @@ prepare_k8s_env() {
 }
 
 start_edgemesh() {
-  start_edgemesh_server
-
-  start_edgemesh_agent
+  echo "using helm to install edgemesh"
+  helm install edgemesh --set global.mode=ci \
+    --set golbal.kubeAPIConfig=${KUBECONFIG} \
+    --set server.nodeName=${MASTER_NODENAME} \
+    --set server.image=${SERVER_IMAGE} \
+    --set agent.image=${AGENT_IMAGE} \
+    --dry-run --debug ./build/helm/edgemesh
+  kubectl wait --timeout=${TIMEOUT} --for=condition=Ready pod -l kubeedge=edgemesh-server -n kubeedge
+  kubectl wait --timeout=${TIMEOUT} --for=condition=Ready pod -l kubeedge=edgemesh-agent -n kubeedge
+#  start_edgemesh_server
+#  start_edgemesh_agent
 }
 
 start_edgemesh_server() {
