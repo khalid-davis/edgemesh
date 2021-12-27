@@ -49,6 +49,10 @@ spec:
               mountPath: /etc/kubeedge/edgemesh
             - name: ca-server-token
               mountPath: /etc/kubeedge/cert
+            {{- if eq .Values.global.mode "ci"}}
+            - name: kubeconfig
+              mountPath: /etc/kubeedge/kubeconfig
+            {{- end }}
             - name: host-time
               mountPath: /etc/localtime
               readOnly: true
@@ -71,3 +75,8 @@ spec:
         - name: host-time
           hostPath:
             path: /etc/localtime
+        {{- if eq .Values.global.mode "ci"}}
+        - name: kubeconfig
+          hostPath:
+            path: /etc/kubedge/kubeconfig
+        {{- end }}
