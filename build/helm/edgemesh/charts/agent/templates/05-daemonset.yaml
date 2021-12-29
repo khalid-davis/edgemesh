@@ -62,7 +62,7 @@ spec:
               mountPath: /etc/kubeedge/cert
             {{- if eq .Values.global.mode "ci"}}
             - name: kubeconfig
-              mountPath: /etc/kubeedge/kubeconfig
+              mountPath: {{ .Values.global.KubeAPIConfigMountPath }}
             {{- end }}
             - name: host-time
               mountPath: /etc/localtime
@@ -89,5 +89,5 @@ spec:
         {{- if eq .Values.global.mode "ci"}}
         - name: kubeconfig
           hostPath:
-            path: {{ .Values.global.kubeAPIConfig }}
+            path: {{ .Values.global.KubeAPIConfigHostPath }}
         {{- end }}
