@@ -160,8 +160,13 @@ start_edgemesh() {
     --set global.kubeAPIConfig=${KUBECONFIG} \
     --set server.nodeName=${MASTER_NODENAME} \
     --set server.image=${SERVER_IMAGE} \
-    --set agent.image=${AGENT_IMAGE} \
-    --dry-run --debug ./build/helm/edgemesh
+    --set agent.image=${AGENT_IMAGE} ./build/helm/edgemesh
+  #helm install edgemesh --set global.mode=ci \
+  #  --set golbal.kubeAPIConfig=${KUBECONFIG} \
+  #  --set server.nodeName=${MASTER_NODENAME} \
+  #  --set server.image=${SERVER_IMAGE} \
+  #  --set agent.image=${AGENT_IMAGE} --dry-run --debug ./build/helm/edgemesh
+
   kubectl wait --timeout=${TIMEOUT} --for=condition=Ready pod -l kubeedge=edgemesh-server -n kubeedge
   kubectl wait --timeout=${TIMEOUT} --for=condition=Ready pod -l kubeedge=edgemesh-agent -n kubeedge
 #  start_edgemesh_server
@@ -565,6 +570,7 @@ do_up_fg() {
   You can use it with: kind export kubeconfig --name ${CLUSTER_NAME}
   $debug_infos
   "
+  set -x
   while check_healthy; do sleep 5; done
 }
 
