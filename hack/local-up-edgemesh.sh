@@ -48,7 +48,7 @@ EDGE_NODENAME=edge-node
 KUBEEDGE_VERSION=1.8.2
 NAMESPACE=kubeedge
 LOG_DIR=${LOG_DIR:-"/tmp"}
-TIMEOUT=${TIMEOUT:-120}s
+TIMEOUT=${TIMEOUT:-12000}s
 
 if [[ "${CLUSTER_NAME}x" == "x" ]];then
     CLUSTER_NAME="test"
