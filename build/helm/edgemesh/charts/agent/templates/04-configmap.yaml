@@ -16,7 +16,7 @@ data:
       configMapName: {{ .Release.Name }}-agent-cfg
     {{- if eq .Values.global.mode "ci" }}
     kubeAPIConfig:
-      kubeConfig: {{ .Values.global.kubeAPIConfig }}
+      kubeConfig: {{ .Values.global.KubeAPIConfigMountPath }}
     {{- else }}
     {{- if .Values.kubeAPIConfig }}
     kubeAPIConfig:
