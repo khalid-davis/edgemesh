@@ -14,10 +14,6 @@ data:
       dummyDeviceName: {{ .Values.commonConfig.dummyDeviceName }}
       dummyDeviceIP: {{ .Values.commonConfig.dummyDeviceIP }}
       configMapName: {{ .Release.Name }}-agent-cfg
-    {{- if eq .Values.global.mode "ci" }}
-    kubeAPIConfig:
-      kubeConfig: {{ .Values.global.KubeAPIConfigMountPath }}
-    {{- else }}
     {{- if .Values.kubeAPIConfig }}
     kubeAPIConfig:
       {{- if .Values.kubeAPIConfig.burst }}
@@ -36,7 +32,6 @@ data:
       qps: {{ .Values.kubeAPIConfig.qps }}
       {{- end}}
     {{- end}}
-    {{- end }}
     goChassisConfig:
       protocol:
         tcpBufferSize: {{ .Values.goChassisConfig.protocol.tcpBufferSize }}

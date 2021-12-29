@@ -2,5 +2,3 @@
 # ci: ci config for edgemesh ci, we use k8s list-watch directly in ci
 global:
   mode: default
-  KubeAPIConfigHostPath: /etc/kubedge/kubeconfig
-  KubeAPIConfigMountPath: /etc/kubedge/kubeconfig

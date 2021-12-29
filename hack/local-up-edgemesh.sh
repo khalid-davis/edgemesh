@@ -49,6 +49,8 @@ KUBEEDGE_VERSION=1.8.2
 NAMESPACE=kubeedge
 LOG_DIR=${LOG_DIR:-"/tmp"}
 TIMEOUT=${TIMEOUT:-120}s
+KUBEAPI_PROXY_PORT=8081
+KUBEAPI_PROXY_ADDR=""
 
 if [[ "${CLUSTER_NAME}x" == "x" ]];then
     CLUSTER_NAME="test"
@@ -82,6 +84,14 @@ function check_control_plane_ready {
   echo "wait the control-plane ready..."
   kubectl wait --for=condition=Ready node/${CLUSTER_NAME}-control-plane --timeout=${TIMEOUT}
   MASTER_IP=`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' test-control-plane`
+}
+
+function proxy_kubeAPI {
+    echo "proxy kubeAPI master"
+    nohup kubectl proxy --address='0.0.0.0'  --port=${KUBEAPI_PROXY_PORT} --accept-hosts='^*$' >/dev/null 2>&1 &
+    KUBEAPI_PROXY_ADDR="127.0.0.1:"${KUBEAPI_PROXY_PORT}
+    # todo delete
+    curl KUBEAPI_PROXY_ADDR
 }
 
 function check_node_ready {
@@ -157,7 +167,7 @@ prepare_k8s_env() {
 start_edgemesh() {
   echo "using helm to install edgemesh"
   helm install edgemesh --set global.mode=ci \
-    --set global.KubeAPIConfigHostPath=${KUBECONFIG} \
+    --set agent.kubeAPIConfig.master=${KUBEAPI_PROXY_ADDR} \
     --set server.nodeName=${MASTER_NODENAME} \
     --set server.image=${SERVER_IMAGE} \
     --set agent.image=${AGENT_IMAGE} ./build/helm/edgemesh
@@ -538,6 +548,8 @@ do_up() {
   prepare_k8s_env
 
   check_control_plane_ready
+
+  proxy_kubeAPI
 
   kubectl delete daemonset kindnet -n kube-system
   kubectl create ns kubeedge
