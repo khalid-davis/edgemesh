@@ -88,13 +88,14 @@ function check_control_plane_ready {
 
 function proxy_kubeAPI {
     set -x
-    sleep 20
     echo "proxy kubeAPI master"
     nohup kubectl proxy --address='0.0.0.0'  --port=${KUBEAPI_PROXY_PORT} --accept-hosts='^*$' >/dev/null 2>&1 &
+    PROXY_PID=$!
+    add_cleanup 'sudo kill $PROXY_PID'
     KUBEAPI_PROXY_ADDR=${HOST_IP}:${KUBEAPI_PROXY_PORT}
     echo ${KUBEAPI_PROXY_ADDR}
     # todo delete
-    sleep 10
+    sleep 5
     curl ${KUBEAPI_PROXY_ADDR}
 }
 
