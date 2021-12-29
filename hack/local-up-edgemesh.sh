@@ -49,7 +49,7 @@ KUBEEDGE_VERSION=1.8.2
 NAMESPACE=kubeedge
 LOG_DIR=${LOG_DIR:-"/tmp"}
 TIMEOUT=${TIMEOUT:-120}s
-KUBEAPI_PROXY_PORT=8081
+KUBEAPI_PROXY_PORT=8090
 KUBEAPI_PROXY_ADDR=""
 
 if [[ "${CLUSTER_NAME}x" == "x" ]];then
@@ -87,11 +87,15 @@ function check_control_plane_ready {
 }
 
 function proxy_kubeAPI {
+    set -x
+    sleep 20
     echo "proxy kubeAPI master"
     nohup kubectl proxy --address='0.0.0.0'  --port=${KUBEAPI_PROXY_PORT} --accept-hosts='^*$' >/dev/null 2>&1 &
-    KUBEAPI_PROXY_ADDR="127.0.0.1:"${KUBEAPI_PROXY_PORT}
+    KUBEAPI_PROXY_ADDR=${HOST_IP}:${KUBEAPI_PROXY_PORT}
+    echo ${KUBEAPI_PROXY_ADDR}
     # todo delete
-    curl KUBEAPI_PROXY_ADDR
+    sleep 10
+    curl ${KUBEAPI_PROXY_ADDR}
 }
 
 function check_node_ready {
@@ -166,17 +170,19 @@ prepare_k8s_env() {
 
 start_edgemesh() {
   echo "using helm to install edgemesh"
-  helm install edgemesh --set global.mode=ci \
-    --set agent.kubeAPIConfig.master=${KUBEAPI_PROXY_ADDR} \
-    --set server.nodeName=${MASTER_NODENAME} \
-    --set server.image=${SERVER_IMAGE} \
-    --set agent.image=${AGENT_IMAGE} ./build/helm/edgemesh
-  #helm install edgemesh --set global.mode=ci \
-  #  --set golbal.kubeAPIConfig=${KUBECONFIG} \
+  # we keep this for debug
+  # helm install edgemesh --set global.mode=ci \
+  #  --set agent.kubeAPIConfig.master=${KUBEAPI_PROXY_ADDR} \
   #  --set server.nodeName=${MASTER_NODENAME} \
   #  --set server.image=${SERVER_IMAGE} \
   #  --set agent.image=${AGENT_IMAGE} --dry-run --debug ./build/helm/edgemesh
 
+  helm install edgemesh --set global.mode=ci \
+    --set server.nodeName=${MASTER_NODENAME} \
+    --set server.image=${SERVER_IMAGE} \
+    --set agent.kubeAPIConfig.master=${KUBEAPI_PROXY_ADDR} \
+    --set agent.image=${AGENT_IMAGE} ./build/helm/edgemesh
+  
   kubectl wait --timeout=${TIMEOUT} --for=condition=Ready pod -l kubeedge=edgemesh-server -n kubeedge
   kubectl wait --timeout=${TIMEOUT} --for=condition=Ready pod -l kubeedge=edgemesh-agent -n kubeedge
 #  start_edgemesh_server
@@ -549,10 +555,11 @@ do_up() {
 
   check_control_plane_ready
 
-  proxy_kubeAPI
 
   kubectl delete daemonset kindnet -n kube-system
   kubectl create ns kubeedge
+
+  proxy_kubeAPI
 
   # here local up kubeedge before building our images, this could avoid our
   # images be removed since edgecore image gc would be triggered when high
