@@ -157,7 +157,7 @@ prepare_k8s_env() {
 start_edgemesh() {
   echo "using helm to install edgemesh"
   helm install edgemesh --set global.mode=ci \
-    --set golbal.kubeAPIConfig=${KUBECONFIG} \
+    --set global.kubeAPIConfig=${KUBECONFIG} \
     --set server.nodeName=${MASTER_NODENAME} \
     --set server.image=${SERVER_IMAGE} \
     --set agent.image=${AGENT_IMAGE} \
